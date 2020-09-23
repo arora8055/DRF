@@ -7,8 +7,8 @@ import json
 # Create your views here.
 
 
-class EmployeeDetailCBV(View):
-    def get(self, request):
+class EmployeeListCBV(View):
+    def get(self, request, *args, **kwargs):
         qs = Employee.objects.all()
         json_data = serialize('json', qs, fields=('eno', 'ename'))
         pdict = json.loads(json_data)
@@ -16,3 +16,19 @@ class EmployeeDetailCBV(View):
         for item in pdict:
             result.append(item['fields'])
         return HttpResponse(json.dumps(result), content_type='application/json')
+
+
+class EmployeeDetailCBV(View):
+    def get(self, request, id, *args, **kwargs):
+        try:
+            emp_data = Employee.objects.get(id=id)
+        except Employee.DoesNotExist:
+            return HttpResponse(json.dumps({'msg': 'User Not Found'}), status=404)
+        else:
+            json_data = serialize(
+                'json', [emp_data, ], fields=('eno', 'ename'))
+            pdict = json.loads(json_data)
+            result = []
+            for item in pdict:
+                result.append(item['fields'])
+            return HttpResponse(json.dumps(result), content_type='application/json')
