@@ -74,3 +74,17 @@ class EmployeeDetailCBV(View):
             if form.errors:
                 json_data = json.dumps(form.errors)
                 return HttpResponse(json_data, status=404)
+
+    def delete(self, request, id, *args, **kwargs):
+        try:
+            obj = Employee.objects.get(id=id)
+        except Employee.DoesNotExist:
+            return HttpResponse(json.dumps({'msg': 'No matched record found'}))
+        else:
+            status, deleted = obj.delete()
+            if status == 1:
+                json_data = json.dumps({'msg': 'Deletd Successfully'})
+                return HttpResponse(json_data, status=200)
+            else:
+                json_data = json.dumps({'msg': 'Unable to delete '})
+                return HttpResponse(json_data, status=404)
