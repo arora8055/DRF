@@ -9,6 +9,6 @@ class EmployeeForm(forms.ModelForm):
             raise forms.ValidationError('The minimum salary should be 5000')
         return input_sal
 
-        class Meta:
-            model = Employee
-            fields = '__all__'
+    class Meta:
+        model = Employee
+        fields = '__all__'

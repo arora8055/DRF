@@ -12,6 +12,7 @@ from testapp.forms import EmployeeForm
 # Create your views here.
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class EmployeeCRUDCBV(HttpResponseMixin, SerializeMixin, View):
     def get_object_by_id(self, id):
         try:
@@ -35,3 +36,16 @@ class EmployeeCRUDCBV(HttpResponseMixin, SerializeMixin, View):
         qs = Employee.objects.all()
         json_data = self.serialize(qs)
         return self.render_to_http_response(json_data)
+
+    def post(self, request, *args, **kwargs):
+        data = request.body
+        if not is_json(data):
+            return self.render_to_http_response(json.dumps({'msg': 'plz send valid json data only'}), status=400)
+        empdata = json.loads(request.body)
+        form = EmployeeForm(empdata)
+        if form.is_valid():
+            obj = form.save(commit=True)
+            return self.render_to_http_response(json.dumps({'msg': 'resource created successfully'}))
+        if form.errors:
+            json_data = json.dumps(form.errors)
+            return self.render_to_http_response(json_data, status=400)
