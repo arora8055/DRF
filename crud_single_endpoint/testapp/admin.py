@@ -4,7 +4,7 @@ from .models import Employee
 
 
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ['eno', 'esal', 'eaddr', 'esal']
+    list_display = ['id', 'eno', 'esal', 'eaddr', 'esal']
 
 
 admin.site.register(Employee, EmployeeAdmin)
