@@ -74,3 +74,23 @@ class EmployeeCRUDCBV(SerializeMixin, HttpResponseMixin, View):
         if form.errors:
             json_data = json.dumps(form.errors)
             return self.render_to_http_response(json_data, status=400)
+
+    def delete(self, request, *args, **kwargs):
+        data = request.body
+        if not is_json(data):
+            return self.render_to_http_response(json.dumps({'msg': 'plz send valid jsondata only'}), status=400)
+        data = json.loads(request.body)
+        id = data.get('id', None)
+        if id is None:
+            return self.render_to_http_response(json.dumps({'msg': 'To perform delete,id is mandatory,you should provide'}), status=400)
+        obj = self.get_object_by_id(id)
+        if obj is None:
+            json_data = json.dumps(
+                {'msg': 'No matched record found, Not possible to perform delete operation'})
+            return self.render_to_http_response(json_data, status=404)
+        status, deleted_item = obj.delete()
+        if status == 1:
+            json_data = json.dumps({'msg': 'Resource Deleted successfully'})
+            return self.render_to_http_response(json_data)
+        json_data = json.dumps({'msg': 'unable to delete ...plz try again'})
+        return self.render_to_http_response(json_data, status=500)
