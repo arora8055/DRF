@@ -36,3 +36,19 @@ class EmployeeCRUDCBV(SerializeMixin, HttpResponseMixin, View):
         qs = Employee.objects.all()
         json_data = self.serialize(qs)
         return self.render_to_http_response(json_data)
+
+    def post(self, request, *args, **kwargs):
+        data = request.body
+        valid_json = is_json(data)
+        if not valid_json:
+            return self.render_to_http_response(json.dumps({'msg': 'Please send valid js only'}), status=400)
+        emp_data = json.loads(data)
+        form = EmployeeForm(emp_data)
+        if form.is_valid():
+            form.save(commit=True)
+            return self.render_to_http_response(json.dumps({'msg': 'Resource Created Sucessfully'}))
+        if form.errors:
+            json_data = json.dumps(form.errors)
+            return self.render_to_http_response(json_data, status=400)
+
+    # def put(self, request, *args, **kwargs):
