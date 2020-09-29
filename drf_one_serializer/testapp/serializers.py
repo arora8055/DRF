@@ -1,9 +1,7 @@
-from django.db import models
-
-# Create your models here.
+from rest_framework import serializers
 
 
-class Employee(models.Model):
+class EmailSerializer(serializers.Serializer):
     eno = models.IntegerField()
     ename = models.CharField(max_length=64)
     esal = models.FloatField()
