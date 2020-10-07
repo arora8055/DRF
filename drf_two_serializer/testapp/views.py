@@ -43,3 +43,18 @@ class EmployeeCRUBCBV(View):
             return HttpResponse(json_data, content_type='application/json')
         json_data = JSONRenderer().render(serializer.errors)
         return HttpResponse(json_data, content_type='application/json')
+
+    def put(self, request, *args, **kwargs):
+        json_data = request.body
+        stream = io.BytesIO(json_data)
+        data = JSONParser().parse(stream)
+        id = data.get('id')
+        emp = Employee.objects.get(id=id)
+        serializer = EmployeeSerializer(emp, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            msg = {'msg': 'Resource updated sucessfully'}
+            json_data = JSONRenderer().render(msg)
+            return HttpResponse(json_data, content_type='application/json')
+        json_data = JSONRenderer().render(serializer.errors)
+        return HttpResponse(json_data, content_type='application/json')
