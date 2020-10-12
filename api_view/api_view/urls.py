@@ -20,4 +20,5 @@ from testapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', views.EmployeeAPIView.as_view()),
+    path('api2/', views.EmployeeCreateAPIView.as_view())
 ]
